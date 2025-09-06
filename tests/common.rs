@@ -7,7 +7,7 @@ pub use futures_util::{StreamExt, TryStreamExt};
 pub use podman_api::{api, conn, models, opts, Podman};
 pub use tempdir::TempDir;
 
-pub const DEFAULT_IMAGE: &str = "ubuntu:latest";
+pub const DEFAULT_IMAGE: &str = "docker.io/ubuntu:latest";
 pub const DEFAULT_CMD: &str = "sleep inf";
 pub const DEFAULT_CMD_ARRAY: &[&str] = &["sleep", "inf"];
 pub const TEST_IMAGE_PATH: &str = "/var/test123";

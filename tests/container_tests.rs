@@ -35,7 +35,7 @@ async fn container_inspect() {
     let inspect_result = container.inspect().await;
     assert!(inspect_result.is_ok());
     let inspect_data = inspect_result.unwrap();
-    assert!(inspect_data.image_name.unwrap().contains("ubuntu:latest"));
+    assert!(inspect_data.image_name.unwrap().contains(DEFAULT_IMAGE));
     assert_eq!(inspect_data.name.unwrap(), "test-inspect-container");
     assert_eq!(inspect_data.config.unwrap().cmd.unwrap(), DEFAULT_CMD_ARRAY);
 
@@ -825,6 +825,7 @@ async fn container_healthcheck() {
                 "/etc/xattr.conf".into(),
             ]),
             timeout: Some(1000000000),
+            start_interval: None,
         })
         .build();
     let container = create_base_container(&podman, container_name, Some(opts)).await;

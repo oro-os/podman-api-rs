@@ -3263,7 +3263,7 @@ pub struct InspectContainerConfig {
     #[serde(rename = "StopSignal")]
     #[serde(skip_serializing_if = "Option::is_none")]
     /// Container stop signal
-    pub stop_signal: Option<String>,
+    pub stop_signal: Option<i64>,
     #[serde(rename = "StopTimeout")]
     #[serde(skip_serializing_if = "Option::is_none")]
     /// StopTimeout is time before container is stopped when calling stop

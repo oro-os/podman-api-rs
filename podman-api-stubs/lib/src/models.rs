@@ -3192,7 +3192,11 @@ pub struct InspectContainerConfig {
     #[serde(rename = "Entrypoint")]
     #[serde(skip_serializing_if = "Option::is_none")]
     /// Container entrypoint
-    pub entrypoint: Option<Vec<String>>,
+    // FIXME(qix-): It appears that the swagger docs are either not correct or are not generating
+    // FIXME(qix-): correctly. They indicate this field is a string vector, but it appears to be
+    // FIXME(qix-): just a string.
+    //pub entrypoint: Option<Vec<String>>,
+    pub entrypoint: Option<String>,
     #[serde(rename = "Env")]
     #[serde(skip_serializing_if = "Option::is_none")]
     /// Container environment variables

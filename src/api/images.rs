@@ -411,10 +411,51 @@ impl Images {
             .ok_or_else(|| Error::OptsSerialization("expected a path to build context".into()))?;
         tarball::dir(&mut bytes, path)?;
 
+        self.build_tar(opts, bytes)
+    }}
+
+    api_doc! {
+    Image => BuildLibpod
+    |
+    /// Build an image from the given Dockerfile(s), using a tarball as build context
+    ///
+    /// Examples:
+    ///
+    /// ```no_run
+    /// async {
+    ///     use podman_api::Podman;
+    ///     use futures_util::StreamExt;
+    ///     use podman_api::opts::ImageBuildOpts;
+    ///
+    ///     let podman = Podman::unix("/run/user/1000/podman/podman.sock");
+    ///     let some_tarball = std::fs::read("context.tar").unwrap();
+    ///
+    ///     // Builder context path is not used when providing a tarball directly.
+    ///     let opts = ImageBuildOpts::builder("/dev/null")
+    ///             .tag("myimage:1.0.0")
+    ///             .build();
+    ///
+    ///     let images = podman.images();
+    ///     match images.build_tar(&opts, some_tarball) {
+    ///         Ok(mut build_stream) => while let Some(chunk) = build_stream.next().await {
+    ///             match chunk {
+    ///                 Ok(chunk) => println!("{:?}", chunk),
+    ///                 Err(e) => eprintln!("{}", e),
+    ///             }
+    ///         },
+    ///         Err(e) => eprintln!("{}", e),
+    ///     };
+    /// };
+    /// ```
+    pub fn build_tar<'a>(
+        &'a self,
+        opts: &opts::ImageBuildOpts,
+        tarball: impl Into<crate::conn::hyper::Body> + 'a,
+    ) -> Result<impl Stream<Item = Result<models::ImageBuildLibpod200Response>> + Unpin + 'a> {
         let ep = url::construct_ep("/libpod/build", opts.serialize());
         let reader = Box::pin(
             self.podman
-                .post_stream(ep, Payload::Tar(bytes), Headers::none())
+                .post_stream(ep, Payload::Tar(tarball), Headers::none())
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e)),
         )
         .into_async_read();
